@@ -1,37 +1,37 @@
 use proconio::*;
-struct BIT {
+struct Bit {
     n:usize,
-    Bit:Vec<i64>
+    bit:Vec<i64>
 }
-impl BIT {
+impl Bit {
     fn new(_n:usize) -> Self {
-        let mut vec:Vec<i64> = vec![0;_n + 1];
-        BIT {
-            Bit:vec,
+        let vec:Vec<i64> = vec![0;_n + 1];
+        Bit {
+            bit:vec,
             n:_n
         }
     }
     fn add(&mut self,mut id:usize,x:i64){
         id += 1;
         while id <= self.n {
-            self.Bit[id] += x;
-            let mut I = id as i64;
-            id += (I & (-I)) as usize;
+            self.bit[id] += x;
+            let i = id as i64;
+            id += (i & (-i)) as usize;
         }
     }
     //sum of [0,i)
     fn sum(&mut self, mut id:usize) -> i64 {
         let mut s:i64 = 0;
-        let mut I = id as i64;
-        while I > 0 {
-            id = I as usize;
-            s += self.Bit[id];
-            I -= I & (-I);
+        let mut i = id as i64;
+        while i > 0 {
+            id = i as usize;
+            s += self.bit[id];
+            i -= i & (-i);
         }
         s
     }
     //sum of [a,b);
-    fn segment_sum(&mut self, mut a:usize,mut b:usize) -> i64{
+    fn segment_sum(&mut self,a:usize,b:usize) -> i64{
        self.sum(b) - self.sum(a)
     }
 }
@@ -42,10 +42,9 @@ fn main(){
         a:[i64;n]
     }
     let mut ans = 0;
-    let mut bit = BIT::new(n);
+    let mut bit = Bit::new(n);
     for i in 0..n{
         ans += i as i64 - bit.sum(a[i] as usize);
-        let mut I = i;
         bit.add(a[i] as usize,1);
     }
     for i in 0..n{
