@@ -32,7 +32,7 @@ impl BIT {
     }
     //sum of [a,b);
     fn segment_sum(&mut self, mut a:usize,mut b:usize) -> i64{
-       self.sum(mut b) - self.sum(mut a)
+       self.sum(b) - self.sum(a)
     }
 }
 //AC code of Shift and Inversion(ABC190-F)
@@ -44,13 +44,13 @@ fn main(){
     let mut ans = 0;
     let mut bit = BIT::new(n);
     for i in 0..n{
-        ans += i as i64 - bit.sum(mut(a[i] as usize));
+        ans += i as i64 - bit.sum(a[i] as usize);
         let mut I = i;
-        bit.add(mut (a[i] as usize),1);
+        bit.add(a[i] as usize,1);
     }
     for i in 0..n{
         println!("{}",ans);
-        ans += (n as i64  - 1 - a[i]);
-        ans -= (a[i]);
+        ans += n as i64  - 1 - a[i];
+        ans -= a[i];
     }
 }
