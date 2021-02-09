@@ -1,9 +1,8 @@
-//from https://github.com/kenkoooo/competitive-programming-rs/blob/master/src/math/mod_int.rs
-//tested in ABC055-B
 use crate::mod_int::{set_mod_int,ModInt};
+//from https://github.com/kenkoooo/competitive-programming-rs/blob/master/src/math/mod_int.rs
 pub mod mod_int {
-    std::cell::RefCell;
-    use::std::ops{Add,AddAssign,Div,DivAssign,Mul,MulAssign,Sub,SubAssign};
+    use std::cell::RefCell;
+    use std::ops::{Add,AddAssign,Div,DivAssign,Mul,MulAssign,Sub,SubAssign};
 
     type InternalNum = i64;
     thread_local!(
@@ -28,7 +27,7 @@ pub mod mod_int {
             Self(self.0)
         }
     }
-    impl Copy for Modint {}
+    impl Copy for ModInt {}
 
     impl ModInt {
         pub fn new<T>(v:T) -> Self
@@ -45,7 +44,7 @@ pub mod mod_int {
 
         pub fn internal_pow(&self, mut e: InternalNum) -> Self {
             let mut result = 1;
-            let mut cut = self.0;
+            let mut cur = self.0;
             let modulo = modulo();
             while e > 0 {
                 if e & 1 == 1 {
@@ -72,7 +71,7 @@ pub mod mod_int {
 
     impl From<ModInt> for InternalNum {
         fn from(m:ModInt) -> Self {
-            m.value();
+            m.value()
         }
     }
 
@@ -111,7 +110,7 @@ pub mod mod_int {
         InternalNum: From<T>,
     {
         fn sub_assign(&mut self, rhs: T) {
-            let mut rhs = InternalNum:from(rhs);
+            let mut rhs = InternalNum::from(rhs);
             let m = modulo();
             if rhs >= m {
                 rhs %= m;
@@ -125,11 +124,11 @@ pub mod mod_int {
         }
     }
     
-    impl<T> sub<T> for ModInt
+    impl<T> Sub<T> for ModInt
     where
         InternalNum: From<T>,
     {
-        type Output = self;
+        type Output = Self;
         fn sub(self,rhs:T) -> Self::Output {
             let mut res = self;
             res -= rhs;
@@ -141,7 +140,7 @@ pub mod mod_int {
     where
         InternalNum: From<T>,
     {
-        fn mul_assign(&mut self, rh: T) {
+        fn mul_assign(&mut self, rhs: T) {
             let mut rhs = InternalNum::from(rhs);
             let m = modulo();
             if rhs >= m {
@@ -157,7 +156,7 @@ pub mod mod_int {
         InternalNum: From<T>,
     {
         type Output = Self;
-        fn mul(sel, rhs:T) -> Self.Output {
+        fn mul(self, rhs:T) -> Self::Output {
             let mut res = self;
             res *= rhs;
             res
@@ -168,7 +167,7 @@ pub mod mod_int {
     where
         InternalNum: From<T>,
     {
-        fn div_assign(&Mut self, rhs:T){
+        fn div_assign(&mut self, rhs:T){
             let mut rhs = InternalNum::from(rhs);
             let m = modulo();
             if rhs >= m {
@@ -188,9 +187,48 @@ pub mod mod_int {
         fn div(self, rhs: T) -> Self::Output {
             let mut res = self;
             res /= rhs;
-            res;
+            res
         }
     }
 }
 
+pub mod binomial_coefficient {
+    use crate::mod_int::{set_mod_int,ModInt};
+    pub struct binomial_coefficient<ModInt> {
+        fact:Vec<ModInt>,
+        inversion:Vec<ModInt>
+    }
+    impl binomial_coefficient<ModInt> {
+       pub fn new(n:usize,_mod:i64) -> Self {
+            set_mod_int(_mod);
+            let a = ModInt::new(1);
+            let mut _fact:Vec<ModInt> = vec![a;n + 1];
+            let mut _inversion:Vec<ModInt> = vec![a;n + 1];
+            for i in 1..=n{
+                _fact[i] = _fact[i - 1] * i as i64;
+            }
+            _inversion[n] = _fact[n].internal_pow(_mod - 2);
+            for i in (1..=n).rev(){
+               _inversion[i - 1] = _inversion[i] * i as i64;
+            }
+        binomial_coefficient {
+            fact:_fact,
+            inversion:_inversion
+            }
+        }
+        pub fn combination(&mut self,n:i64,k:i64) -> ModInt{
+            if k < 0 || k > n {
+                return ModInt::new(0)    
+            }
+            self.fact[n as usize] * self.inversion[k as usize] * self.inversion[n as usize - k as usize]
 
+        }
+
+        pub fn permutation(&mut self,n:i64,k:i64) -> ModInt{
+            if k < 0 || k > n{
+                return ModInt::new(0)
+            }
+            self.combination(n,k) * self.fact[k as usize]
+        }
+    }
+}
