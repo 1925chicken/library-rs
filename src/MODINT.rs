@@ -3,19 +3,19 @@ use crate::mod_int::{set_mod_int,ModInt};
 pub mod mod_int {
     use std::cell::RefCell;
     use std::ops::{Add,AddAssign,Div,DivAssign,Mul,MulAssign,Sub,SubAssign};
-
+ 
     type InternalNum = i64;
     thread_local!(
         static MOD: RefCell<InternalNum> = RefCell::new(0);//0という値でRefCellを生成
         );
-
+ 
     pub fn set_mod_int<T>(v:T)
     where
         InternalNum: From<T>,
     {
         MOD.with(|x| x.replace(InternalNum::from(v)));
     }
-
+ 
     fn modulo() -> InternalNum {
         MOD.with(|x| *x.borrow())
     }
@@ -28,7 +28,7 @@ pub mod mod_int {
         }
     }
     impl Copy for ModInt {}
-
+ 
     impl ModInt {
         pub fn new<T>(v:T) -> Self
         where
@@ -41,7 +41,7 @@ pub mod mod_int {
             }
             Self(v)
         }
-
+ 
         pub fn internal_pow(&self, mut e: InternalNum) -> Self {
             let mut result = 1;
             let mut cur = self.0;
@@ -56,7 +56,7 @@ pub mod mod_int {
             }
             Self(result)
         }
-
+ 
         pub fn pow<T>(&self , e:T) -> Self
         where
             InternalNum: From<T>,
@@ -68,13 +68,13 @@ pub mod mod_int {
             self.0
         }
     }
-
+ 
     impl From<ModInt> for InternalNum {
         fn from(m:ModInt) -> Self {
             m.value()
         }
     }
-
+ 
     impl<T> AddAssign<T> for ModInt
     where
         InternalNum: From<T>,
@@ -85,14 +85,14 @@ pub mod mod_int {
             if rhs >= m {
                 rhs %= m;
             }
-
+ 
             self.0 += rhs;
             if self.0 >= m {
                 self.0 -= m;
             }
         }
     }
-
+ 
     impl<T> Add<T> for ModInt
     where
         InternalNum: From<T>,
@@ -104,7 +104,7 @@ pub mod mod_int {
             res
         }
     }
-
+ 
     impl<T> SubAssign<T> for ModInt
     where
         InternalNum: From<T>,
@@ -135,7 +135,7 @@ pub mod mod_int {
             res
         }
     }
-
+ 
     impl<T> MulAssign<T> for ModInt
     where
         InternalNum: From<T>,
@@ -150,7 +150,7 @@ pub mod mod_int {
             self.0 %= m;
         }
     }
-
+ 
     impl<T> Mul<T> for ModInt
     where
         InternalNum: From<T>,
@@ -162,7 +162,7 @@ pub mod mod_int {
             res
         }
     }
-
+ 
     impl<T> DivAssign<T> for ModInt
     where
         InternalNum: From<T>,
@@ -178,7 +178,7 @@ pub mod mod_int {
             self.0 %= m;
         }
     }
-
+ 
     impl<T> Div<T> for ModInt
     where
         InternalNum: From<T>,
@@ -191,14 +191,14 @@ pub mod mod_int {
         }
     }
 }
-
+ 
 pub mod binomial_coefficient {
     use crate::mod_int::{set_mod_int,ModInt};
-    pub struct binomial_coefficient<ModInt> {
+    pub struct BinomialCoefficient<ModInt> {
         fact:Vec<ModInt>,
         inversion:Vec<ModInt>
     }
-    impl binomial_coefficient<ModInt> {
+    impl BinomialCoefficient<ModInt> {
        pub fn new(n:usize,_mod:i64) -> Self {
             set_mod_int(_mod);
             let a = ModInt::new(1);
@@ -211,7 +211,7 @@ pub mod binomial_coefficient {
             for i in (1..=n).rev(){
                _inversion[i - 1] = _inversion[i] * i as i64;
             }
-        binomial_coefficient {
+        BinomialCoefficient {
             fact:_fact,
             inversion:_inversion
             }
@@ -221,9 +221,9 @@ pub mod binomial_coefficient {
                 return ModInt::new(0)    
             }
             self.fact[n as usize] * self.inversion[k as usize] * self.inversion[n as usize - k as usize]
-
+ 
         }
-
+ 
         pub fn permutation(&mut self,n:i64,k:i64) -> ModInt{
             if k < 0 || k > n{
                 return ModInt::new(0)
