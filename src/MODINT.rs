@@ -1,4 +1,5 @@
 //from https://github.com/kenkoooo/competitive-programming-rs/blob/master/src/math/mod_int.rs
+use crate::mod_int::{set_mod_int,ModInt};
 pub mod mod_int {
     std::cell::RefCell;
     use::std::ops{Add,AddAssign,Div,DivAssign,Mul,MulAssign,Sub,SubAssign};
