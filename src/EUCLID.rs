@@ -1,32 +1,39 @@
+extern crate num_integer;
+macro_rules! FromInteger{
+    ($from:expr,$x:ty,$y:ty) => {
+        impl From<$x> for $y {
+            fn from($from:$x) -> $y {
+                $from as $y
+            }
+        }
+    };
+}
+macro_rules! ConvertTo {
+    ($x:expr,$tt:ty,$t:ty) => {
+        FromInteger!($x,$tt,$t)
+    };
+}
 use std::ops::{Rem,Not,Mul,Div};
 use std::cmp::Ord;
 use std::marker::Sized;
-fn Euclid <Mytype<S>,Mytype<T>> (mut x:S,mut y:T) -> S 
+fn Euclid <S,T> (mut x:S,mut y:T) -> S 
 where
-    T:std::fmt::Debug + Ord + Copy + Rem + ConvertTo<S> + Zero + Sized,
-    S:std::fmt::Debug + Ord + Copy + Rem + Sized + Zero,
-{   
-    let mut Y:S = y.convert();
-    let mut r:S = y.convert();
-    if x < Y {
+    T:std::fmt::Debug + Ord + Copy + Rem + ConvertTo<S> + num_integer,
+    S:std::fmt::Debug + Ord + Copy + Rem + Zero + num_integer,
+{  
+    let mut Y = ConvertTo!(y,T,S);
+    if x < y {
         std::mem::swap(&mut x,&mut Y);
     }
-    while r != zero()  {
-        r = x % Y;
+    let mut r = ConvertTo!(1,T,S);
+    let z = ConvertTo!(0,T,S);
+    while r != z{
+        let r = ConvertTo!(x % Y,T,S);
         x = Y;
         Y = r;
     }
     x
 }
-
-impl<S> Rem<S> for S 
-where
-    S:std::fmt::Debug + Ord + Copy + Rem + Sized + Zero
-    {
-        fn rem(lhs: S,rhs: S){
-            lhs % rhs
-        }
-    }
 
 
 trait ConvertTo<Output> {
