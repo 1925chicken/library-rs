@@ -1,39 +1,69 @@
-
-use std::cmp::*;
-use std::collections::*;
-use std::io::*;
-use std::str::FromStr;
-fn read<T: FromStr>() -> T {
-    let stdin = stdin();
-    let stdin = stdin.lock();
-    let token: String = stdin
-        .bytes()
-        .map(|c| c.expect("failed to read char") as char)
-        .skip_while(|c| c.is_whitespace())
-        .take_while(|c| !c.is_whitespace())
-        .collect();
-    token.parse().ok().expect("failed to parse token")
-}
-fn gcd(mut x:i64,mut y:i64) -> i64 {
-    let mut r = 1;
+#[allow(dead_code)]
+fn gcd<T>(mut x:T,mut y:T) -> T
+where
+    T:std::cmp::Ord + Copy + std::ops::Rem<Output=T> + Zero + std::marker::Sized + 
+    std::ops::Mul<Output=T> + std::ops::MulAssign + MinusOne + std::ops::Div<Output=T> + std::ops::DivAssign,
+{
+    if x < T::zero() {
+        x *= T::minusone();
+    }
+    if y < T::zero() {
+        y *= T::minusone();
+    }
     if x < y{
         std::mem::swap(&mut x,&mut y);
     }
-    while r != 0 {
+    let mut r = y;
+    while !T::is_zero(&r) {
         r = x % y;
         x = y;
         y = r;
     }
     x
 }
-
-fn lcm(x:i64,y:i64) -> i64{
-    let div = gcd(x,y);
-    x / div * y
+#[allow(dead_code)]
+fn lcm<T>(x:T,y:T) -> T 
+where
+    T:std::cmp::Ord + Copy + std::ops::Rem<Output=T> + Zero + std::marker::Sized + 
+    std::ops::Mul<Output=T> + std::ops::MulAssign + MinusOne + std::ops::Div<Output=T> + std::ops::DivAssign,
+{
+    x / gcd(x,y) * y
+}
+trait Zero:std::ops::Rem<Output=Self> + std::marker::Sized {
+    fn zero() -> Self;
+    fn is_zero(&self) -> bool;
+}
+trait MinusOne:std::ops::Mul<Output=Self> + std::marker::Sized {
+    fn minusone() -> Self;
 }
 
-fn main(){
-    let a:i64 = read();
-    let b:i64 = read();
-    println!("{} {}" gcd(a,b),lcm(a,b));
+macro_rules! impl_zero {
+    ($($t:ty),*)=> {
+        $(
+            impl Zero for $t {
+                fn zero() -> Self{
+                    0
+                }
+                fn is_zero(&self) -> bool {
+                    *self == 0
+                }
+            }
+        )*   
+    };
 }
+
+macro_rules! impl_minusone {
+    ($($t:ty),*)=> {
+        $(
+        impl MinusOne for $t {
+            fn minusone() -> Self {
+                -1
+            }
+        }
+        )*
+    };
+}
+impl_zero! {u64,usize,i64,i32,u32,isize}
+impl_minusone! {i64,i32,isize}
+
+fn main(){}
