@@ -1,3 +1,4 @@
+use std::iter::Iterator;
 #[allow(dead_code)]
 fn upper_bound<T>(f:&Vec<T>,criteria:T) -> usize //criteriaより大きい要素が最初にどこに現れるかを返す
 where
