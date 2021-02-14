@@ -1,74 +1,39 @@
-struct union_find{
-    par:Vec<i64>
+use std::mem::*;
+struct UnionFind {
+    par: Vec<i64>,
 }
-impl union_find {
-    fn new(n:usize) -> Self {
-        let mut vec:Vec<i64> = vec![-1;n];
-        union_find {
-            par:vec
-        }
+#[allow(dead_code)] 
+impl UnionFind {
+    pub fn new(n: usize) -> Self {
+        let par = (0..n).map(|_| -1).collect();
+        Self{par}
     }
-    fn root<T>(&mut self, x:T) -> T{
-        if self.par[x] < 0{
-            x
-        }
-        else{
-            par[x] = self.root(par[x]);
-        }
+    pub fn root(&mut self, x: usize) -> i64 {
+      if self.par[x] < 0{
+          x as i64
+      }else{
+          self.par[x] = self.root(self.par[x] as usize);
+          self.par[x]
+      }
     }
-    fn same<T>(&mut self, x:T, y:T) -> bool {
-        self.root(x) == self.root(y);
+    pub fn same(&mut self, x: usize, y: usize) -> bool {
+        self.root(x) == self.root(y)
     }
-    fn unite<T>(&mut self, &mut x:T, &mut y:T) -> bool
-    {
-        x = self.root(x);
-        y = self.root(y);
-        if x == y {
-            false
+ 
+    pub fn merge(&mut self, x: usize, y: usize) -> bool {
+        let mut _x: i64 = self.root(x);
+        let mut _y: i64 = self.root(y);
+        if _x == _y {
+            return false;
         }
-        if self.par[x] > self.par[y]{
-            std::mem::swap(&mut x, &mut y);
+        if self.par[_x as usize] > self.par[_y as usize] {
+            swap(&mut _x, &mut _y);
         }
-            self.par[x] += self.par[y];
-            self.par[y] = x;
-            true
+        self.par[_x as usize] += self.par[_y as usize];
+        self.par[_y as usize] = _x as i64;
+         return true;
     }
-    fn size<T> (x:T) -> i64{
-        -par[root(x)]
-    }
-}
-
-use std::io::*;
-use std::str::FromStr;
-use std::collections::*;
-use std::cmp::*;
-
-
-fn read<T: FromStr>() -> T {
-    let stdin = stdin();
-    let stdin = stdin.lock();
-    let token: String = stdin
-        .bytes()
-        .map(|c| c.expect("failed to read char") as char)
-        .skip_while(|c| c.is_whitespace())
-        .take_while(|c| !c.is_whitespace())
-        .collect();
-    token.parse().ok().expect("failed to parse token")
-}
-fn main(){
-    let n: usize = read();
-    let q: usize = read();
-    let utf = union_find::new(n);
-    for i in 0..q {
-        let a:Vec<i64> = (0..3).map(|_| read()).collect();
-        if a[0] == 0 {
-            utf::unite(a[1] - 1, a[2] - 1);
-        }else{
-            if utf::same(a[1] - 1, a[2] - 1){
-                println!("Yes");
-            }else{
-                println!("No");
-            }
-        }
+    pub fn size(&mut self, x: usize) -> i64 {
+        (self.par[x]) as i64 * -1
     }
 }
