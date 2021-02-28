@@ -36,7 +36,7 @@ pub mod math {
             v
         }
 
-        pub fn pow_mod_constexpr(x:i64, mut n:i64,m:i32) -> i64 {
+        fn pow_mod_constexpr(x:i64, mut n:i64,m:i32) -> i64 {
             if m == 1 {
                 return 0;
             }
@@ -184,7 +184,7 @@ pub mod math {
         }
     }
 
-    fn pow_mod(x:i64,mut n:i64,m:i32) -> i64 {
+    pub fn pow_mod(x:i64,mut n:i64,m:i32) -> i64 {
         assert!(0 <= n && 1 <= m);
         if m == 1 {
             return 0;
@@ -202,14 +202,14 @@ pub mod math {
         r as i64
     }
 
-    fn inv_mod(x:i64,m:i64) -> i64 {
+    pub fn inv_mod(x:i64,m:i64) -> i64 {
         assert!(1 <= m);
         let z = Barrett::inv_gcd(x,m);
         assert!(z.0 == 1);
         z.0
     }
 
-    fn crt(r:&Vec<i64>,m:&Vec<i64>) -> (i64,i64) {
+    pub fn crt(r:&Vec<i64>,m:&Vec<i64>) -> (i64,i64) {
         assert!(r.len() == m.len());
         let n = r.len();
         let (mut r0,mut m0) = (0,1);
@@ -247,7 +247,7 @@ pub mod math {
         (r0,m0)
     }
 
-    fn floor_sum(n:i64,m:i64,mut a:i64,mut b:i64) -> i64 {
+    pub fn floor_sum(n:i64,m:i64,mut a:i64,mut b:i64) -> i64 {
         assert!(0 <= n && n < (1i64<<32));
         assert!(1 <= m && m < (1i64<<32));
         let mut ans = 0;
